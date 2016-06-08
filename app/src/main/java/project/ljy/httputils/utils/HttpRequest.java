@@ -152,6 +152,9 @@ public class HttpRequest implements Runnable{
             else if(StatusCode == HttpStatus.SC_BAD_REQUEST ){
 
             }
+            else if(StatusCode == HttpStatus.SC_NOT_FOUND){
+
+            }
         }
     }
 

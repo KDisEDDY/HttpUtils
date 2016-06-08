@@ -10,7 +10,7 @@ import android.widget.Toast;
  */
 public class BaseCrashHandler implements Thread.UncaughtExceptionHandler {
     Context context;
-    
+
     Thread.UncaughtExceptionHandler mCrashHandler;
 
 
