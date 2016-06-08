@@ -11,13 +11,22 @@ public class RequestManager {
 
     List<HttpRequest> requestList;
 
+    ThreadPool pool ;
+
     public RequestManager() {
         requestList = new ArrayList<>();
+        pool = ThreadPool.getInstance();
     }
 
     public void addRequest(HttpRequest httpRequest){
         if(requestList != null)
         requestList.add(httpRequest);
+    }
+
+    public void excuteRequest(){
+        for(HttpRequest request :requestList){
+            pool.excute(request);
+        }
     }
 
     public void cancelAllRequest(){

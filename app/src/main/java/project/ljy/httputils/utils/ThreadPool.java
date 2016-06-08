@@ -16,7 +16,7 @@ public class ThreadPool {
 
     static final int THREAD_POOL_SIZE = 6;
 
-    static ArrayBlockingQueue<Runnable> arrayBlockingQueue = new ArrayBlockingQueue<Runnable>(BLOCKING_QUEUE_SIZE);
+    static ArrayBlockingQueue<Runnable> arrayBlockingQueue = new ArrayBlockingQueue<>(BLOCKING_QUEUE_SIZE);
 
     private static ThreadPool instance;
 

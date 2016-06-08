@@ -1,14 +1,22 @@
 package project.ljy.httputils.utils;
 
 
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 
+import org.apache.http.params.CoreConnectionPNames;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ch.boye.httpclientandroidlib.HttpResponse;
+import ch.boye.httpclientandroidlib.HttpStatus;
 import ch.boye.httpclientandroidlib.client.HttpClient;
 import ch.boye.httpclientandroidlib.client.entity.UrlEncodedFormEntity;
 import ch.boye.httpclientandroidlib.client.methods.HttpGet;
@@ -17,6 +25,7 @@ import ch.boye.httpclientandroidlib.client.methods.HttpUriRequest;
 import ch.boye.httpclientandroidlib.impl.client.HttpClients;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 import ch.boye.httpclientandroidlib.protocol.HTTP;
+import project.ljy.httputils.logic.request.BaseReq;
 
 /**
  * 对请求的封装
@@ -38,14 +47,17 @@ public class HttpRequest implements Runnable{
 
     List<RequestParameter> mParameter;
 
-    HttpRequest(UrlData urlData, List<RequestParameter> parameters, RequestCallback mCallback){
+    int StatusCode = -1;
+
+    Map<String,String> mHeader;
+    public HttpRequest(UrlData urlData, List<RequestParameter> parameters, RequestCallback mCallback){
         this.mParameter = parameters;
         this.mCallback = mCallback;
         this.urlData = urlData;
         if (httpClient == null) {
             httpClient = HttpClients.createDefault();
         }
-
+        mHeader = new HashMap<>();
     }
 
     static Handler handler = new Handler(){
@@ -55,13 +67,13 @@ public class HttpRequest implements Runnable{
         }
     };
 
-//    public HttpUriRequest getRequest() {
-//        return request;
-//    }
-//
-//    public void setRequest(HttpUriRequest request) {
-//        this.request = request;
-//    }
+    public HttpUriRequest getRequest() {
+        return request;
+    }
+
+    public void setRequest(HttpUriRequest request) {
+        this.request = request;
+    }
 
     HttpUriRequest request;
 
@@ -70,7 +82,7 @@ public class HttpRequest implements Runnable{
     public void run() {
         if (urlData.getType() == REQUEST_GET){
             StringBuffer arg = new StringBuffer("");
-            String newUrl = null;
+            String newUrl ;
             if (mParameter != null && mParameter.size() > 0){
                 for(int i = 0 ;i < mParameter.size() ;i ++){
                     arg.append(mParameter.get(i).getName()).append("=").append(mParameter.get(i).getValue());
@@ -105,7 +117,54 @@ public class HttpRequest implements Runnable{
             return ;
         }
 
+        request.getParams().setParameter(
+                CoreConnectionPNames.CONNECTION_TIMEOUT, 30000);
+        request.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,
+                30000);
 
+        //设置Header
+        setHeader(request);
+        // 获取状态
+
+        try {
+            response = httpClient.execute(request);
+            StatusCode = response.getStatusLine().getStatusCode();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(mCallback != null){
+            if(StatusCode == HttpStatus.SC_OK){
+                final ByteArrayOutputStream content = new ByteArrayOutputStream();
+                try {
+                      response.getEntity().writeTo(content);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                final String strResponse = new String(content.toByteArray()).trim();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCallback.onSuccess(strResponse);
+                    }
+                });
+            }
+            else if(StatusCode == HttpStatus.SC_BAD_REQUEST ){
+
+            }
+        }
+    }
+
+    void setHeader(HttpUriRequest httpUriRequest){
+        mHeader.clear();
+        mHeader.put("Accept-Charset","UTF-8,*");
+        mHeader.put("User-Agent", Build.MODEL + "," + Build.VERSION.RELEASE);
+        mHeader.put("apikey", BaseReq.apikey);
+        if(httpUriRequest != null && mHeader != null){
+            for (final Map.Entry<String, String> entry : mHeader.entrySet()){
+                    httpUriRequest.addHeader(entry.getKey(),entry.getValue());
+            }
+        }
     }
 
 }
