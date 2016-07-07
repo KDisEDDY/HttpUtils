@@ -1,4 +1,4 @@
-package project.ljy.httputils.utils;
+package project.ljy.httputils.utils.threadpool;
 
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ArrayBlockingQueue;
