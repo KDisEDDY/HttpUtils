@@ -2,6 +2,7 @@ package project.ljy.httputils.logic.network;
 
 import java.util.List;
 
+import project.ljy.httputils.logic.response.BaseRsp;
 import project.ljy.httputils.utils.HttpRequest;
 import project.ljy.httputils.utils.RequestCallback;
 import project.ljy.httputils.utils.RequestManager;

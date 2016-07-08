@@ -11,16 +11,16 @@ import java.util.List;
 import project.ljy.httputils.logic.StockApi;
 import project.ljy.httputils.logic.network.StockinfoDaoImpl;
 import project.ljy.httputils.logic.response.StockRsp;
+import project.ljy.httputils.model.StockBO;
 import project.ljy.httputils.utils.HttpRequest;
 import project.ljy.httputils.utils.RequestManager;
 import project.ljy.httputils.utils.RequestParameter;
+import project.ljy.httputils.utils.RequestStockInfoCallable;
 import project.ljy.httputils.utils.SingletonFactory;
 import project.ljy.httputils.utils.StockRequestCallback;
 import project.ljy.httputils.utils.UrlData;
 
 public class MainActivity extends AppCompatActivity {
-
-    RequestManager requestManager ;
 
     //控件
     TextView text1;
@@ -30,51 +30,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
 
-//        SingletonFactory.getInstance(StockinfoDaoImpl.class).queryStockInfo(StockApi.StockUrl, "00168", 1, new StockRequestCallback() {
-//            @Override
-//            public void onFail(int errorType) {
-//                super.onFail(errorType);
-//            }
-//
-//            @Override
-//            public void onSuccess(String content) {
-//                Gson gson  =  new Gson();
-//                final StockRsp stockRsp = gson.fromJson(
-//                        content, StockRsp.class);
-//                text1.setText(stockRsp.getRetData().getMarket().getShenzhen().getName());
-//            }
-//        });
-
-        //初始化网络管理类和填写参数
-        requestManager = new RequestManager();
-        UrlData urlData = new UrlData();
-        urlData.setType(HttpRequest.REQUEST_GET);
-        urlData.setUrl(StockApi.StockUrl);
-        List<RequestParameter> parameters = new ArrayList<>();
-        parameters.add(new RequestParameter("stockid","00168"));
-        parameters.add(new RequestParameter("list","1"));
-        requestManager.addRequest(new HttpRequest(urlData,parameters,new StockRequestCallback(){
+        SingletonFactory.getInstance(StockinfoDaoImpl.class).queryStockInfo(StockApi.StockUrl,"00168",1, new RequestStockInfoCallable(){
             @Override
-            public void onFail(int errorType) {
-                super.onFail(errorType);
+            public void onCallbackFail(int errorType) {
+                super.onCallbackFail(errorType);
             }
 
             @Override
-            public void onSuccess(String content) {
-                Gson gson  =  new Gson();
-                final StockRsp stockRsp = gson.fromJson(
-                        content, StockRsp.class);
-                text1.setText(stockRsp.getRetData().getMarket().getShenzhen().getName());
+            public void queryStockInfo(StockBO stockBO) {
+                if(stockBO.getRetData() != null && stockBO.getRetData().getStockinfo().size() > 0){
+                    text1.setText(stockBO.getRetData().getMarket().getShenzhen().getName());
+                }
             }
-        }));
+        });
 
-        requestManager.excuteRequest();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        requestManager.cancelAllRequest();
     }
 
     private void initView(){

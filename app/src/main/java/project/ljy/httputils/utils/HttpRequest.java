@@ -26,6 +26,7 @@ import ch.boye.httpclientandroidlib.impl.client.HttpClients;
 import ch.boye.httpclientandroidlib.message.BasicNameValuePair;
 import ch.boye.httpclientandroidlib.protocol.HTTP;
 import project.ljy.httputils.logic.request.BaseReq;
+import project.ljy.httputils.logic.response.BaseRsp;
 
 /**
  * 对请求的封装
@@ -134,27 +135,19 @@ public class HttpRequest implements Runnable{
             e.printStackTrace();
         }
         if(mCallback != null){
-            if(StatusCode == HttpStatus.SC_OK){
-                final ByteArrayOutputStream content = new ByteArrayOutputStream();
-                try {
-                      response.getEntity().writeTo(content);
-                } catch (IOException e) {
-                    e.printStackTrace();
+            final ByteArrayOutputStream content = new ByteArrayOutputStream();
+            try {
+                response.getEntity().writeTo(content);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            final String strResponse = new String(content.toByteArray()).trim();
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mCallback.onExcute(StatusCode,strResponse);
                 }
-                final String strResponse = new String(content.toByteArray()).trim();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mCallback.onSuccess(strResponse);
-                    }
-                });
-            }
-            else if(StatusCode == HttpStatus.SC_BAD_REQUEST ){
-
-            }
-            else if(StatusCode == HttpStatus.SC_NOT_FOUND){
-
-            }
+            });
         }
     }
 

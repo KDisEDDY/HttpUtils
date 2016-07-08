@@ -1,6 +1,6 @@
 package project.ljy.httputils.logic.network.Interface;
 
-import project.ljy.httputils.utils.StockRequestCallback;
+import project.ljy.httputils.utils.RequestStockInfoCallable;
 
 /**
  * Title: IStockinfoDao
@@ -18,7 +18,7 @@ public interface IStockinfoDao {
      * @param url api地址
      * @param stockId 股票代码
      * @param listNum 获取的数据条数
-     * @param stockRequestCallback 股票信息的回调
+     * @param requestStockInfoCallable 股票信息的回调
      */
-    void queryStockInfo(String url ,String stockId,int listNum , StockRequestCallback stockRequestCallback);
+    void queryStockInfo(String url ,String stockId,int listNum , RequestStockInfoCallable requestStockInfoCallable);
 }
