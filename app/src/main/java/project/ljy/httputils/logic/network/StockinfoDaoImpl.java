@@ -28,9 +28,12 @@ public class StockinfoDaoImpl extends BaseRemoteDao implements IStockinfoDao {
         }
         List<RequestParameter> parameters = new ArrayList<>();
 
-        if(listNum > -1 && stockId != null && !stockId.equals("")){
-            parameters.add(new RequestParameter("stockid",stockId));
+        if(listNum > -1){
             parameters.add(new RequestParameter("list" , listNum + ""));
+        }
+
+        if(stockId != null && !stockId.equals("")){
+            parameters.add(new RequestParameter("stockid",stockId));
         }
 
         request(urlData,parameters,stockRequestCallback);

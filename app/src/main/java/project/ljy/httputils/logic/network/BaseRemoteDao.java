@@ -31,5 +31,6 @@ public class BaseRemoteDao {
 
     public  void request(UrlData urlData , List<RequestParameter> parameters , RequestCallback requestCallback){
         requestManager.addRequest(new HttpRequest(urlData,parameters,requestCallback));
+        requestManager.excuteRequest();
     }
 }

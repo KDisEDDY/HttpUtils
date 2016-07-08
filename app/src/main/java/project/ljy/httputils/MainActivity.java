@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import project.ljy.httputils.logic.StockApi;
+import project.ljy.httputils.logic.network.StockinfoDaoImpl;
 import project.ljy.httputils.logic.response.StockRsp;
 import project.ljy.httputils.utils.HttpRequest;
 import project.ljy.httputils.utils.RequestManager;
 import project.ljy.httputils.utils.RequestParameter;
+import project.ljy.httputils.utils.SingletonFactory;
 import project.ljy.httputils.utils.StockRequestCallback;
 import project.ljy.httputils.utils.UrlData;
 
@@ -27,6 +29,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+
+//        SingletonFactory.getInstance(StockinfoDaoImpl.class).queryStockInfo(StockApi.StockUrl, "00168", 1, new StockRequestCallback() {
+//            @Override
+//            public void onFail(int errorType) {
+//                super.onFail(errorType);
+//            }
+//
+//            @Override
+//            public void onSuccess(String content) {
+//                Gson gson  =  new Gson();
+//                final StockRsp stockRsp = gson.fromJson(
+//                        content, StockRsp.class);
+//                text1.setText(stockRsp.getRetData().getMarket().getShenzhen().getName());
+//            }
+//        });
 
         //初始化网络管理类和填写参数
         requestManager = new RequestManager();

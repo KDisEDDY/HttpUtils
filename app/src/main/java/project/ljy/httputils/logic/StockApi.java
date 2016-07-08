@@ -5,6 +5,7 @@ package project.ljy.httputils.logic;
  */
 public class StockApi {
 
+    //http://apis.baidu.com/apistore/stockservice/stock
     public static String BaseUrl = "http://apis.baidu.com/apistore/";
-    public static String StockUrl = BaseUrl + "stockservice/hkstock";
+    public static String StockUrl = BaseUrl + "stockservice/stock";
 }
